@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo 'we believe in you, server.js' && node --check server.js",
+    "test": "node --check server.js && echo 'tests pass. there are no tests.'",
     "build": "echo 'no.'"
   },
   "keywords": ["arr", "tired", "nap", "pvr", "satire"],

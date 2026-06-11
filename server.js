@@ -12,6 +12,7 @@ const EXCUSES = [
   "Have you tried turning yourself off and on again?",
   "Request queued behind 4,612 unwatched episodes.",
   "It's not you, it's everything.",
+  "Working as intended. The intention was nothing.",
 ];
 
 const NAPS = [

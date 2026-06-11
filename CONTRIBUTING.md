@@ -12,7 +12,7 @@ Please don't. We're all very tired.
 
 - Zero dependencies. Adding one means reading its docs, and no.
 - Comments should be honest about how everyone is feeling.
-- All PRs are reviewed at a pace consistent with the project's mission. Current review queue ETA: eventually.
+- PRs are triaged on a first-in, never-out basis.
 
 ## Code of Conduct
 

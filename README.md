@@ -1,6 +1,6 @@
 # 😴 Tiredarr
 
-> The last \*arr you'll ever install. We promise. Please.
+> The last \*arr you'll ever install. Allegedly.
 
 ![build](https://img.shields.io/badge/build-napping-yellow)
 ![coverage](https://img.shields.io/badge/coverage-under%20a%20blanket-blue)
@@ -26,7 +26,7 @@
 
 Every one of them needs an update, an API key, a reverse proxy rule, and a small piece of your soul. The stack manages your media perfectly. Nobody manages *you*.
 
-Until now. Sort of. Not really.
+Tiredarr closes this gap by acknowledging it and going back to bed.
 
 ## Features
 
@@ -53,7 +53,7 @@ node server.js        # zero dependencies. we were too tired to add any.
 Or with Docker:
 
 ```bash
-docker compose up -d  # -d stands for "drowsy"
+docker compose up -d  # detached. like you, from your hobbies.
 ```
 
 Tiredarr listens on port **2222** — named after 22:22, the time you said you'd go to bed.
@@ -91,6 +91,12 @@ Overseerr can request naps on your behalf. Tiredarr will ignore them, maintainin
 
 **Why is the web UI blank?**
 That's dark mode. The darkest mode. Lights off. Go to sleep.
+
+**How is this different from not installing anything?**
+Branding.
+
+**Is there a Discord?**
+Yes. Notifications are muted. In both directions.
 
 **Will there be a v1.0?**
 The roadmap says "eventually." The roadmap is a sticky note. The sticky note fell behind the desk.

@@ -6,7 +6,7 @@
 <title>Tiredarr — the last *arr you'll ever install</title>
 <meta name="description" content="Tiredarr is a fatigue PVR for Usenet and BitTorrent users. It monitors multiple RSS feeds (Really Sleepy Syndication) for new naps. Satire. Obviously.">
 <meta property="og:title" content="Tiredarr — the last *arr you'll ever install">
-<meta property="og:description" content="A fatigue PVR for exhausted homelab users. Sonarr manages your TV. Radarr manages your movies. Nobody manages you. Until now. Sort of. Not really.">
+<meta property="og:description" content="A fatigue PVR for exhausted homelab users. Sonarr manages your TV. Radarr manages your movies. Nobody manages you. Tiredarr closes this gap by acknowledging it and going back to bed.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://buildthehomelab.github.io/tiredarr/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%98%B4%3C/text%3E%3C/svg%3E">
@@ -401,7 +401,7 @@ footer{margin-top:110px;border-top:1px solid var(--line);padding:44px 0 56px}
     <div class="hero-grid">
       <div>
         <span class="pill reveal in"><span class="dot"></span>v0.0.0-alpha-someday — still not out</span>
-        <h1 class="reveal in">The last <span class="star">*</span>arr you'll ever install<span class="yawn">, we promise.</span></h1>
+        <h1 class="reveal in">The last <span class="star">*</span>arr you'll ever install<span class="yawn">, allegedly.</span></h1>
         <p class="lede reveal in">Tiredarr is a <strong>fatigue PVR</strong> for Usenet and BitTorrent users. It monitors multiple RSS feeds <em>(Really Sleepy Syndication)</em> for new naps, then grabs, sorts and renames them. Eventually.</p>
         <div class="cta-row reveal in">
           <button class="btn btn-primary" id="dl">Download v0.0.0</button>
@@ -453,7 +453,7 @@ footer{margin-top:110px;border-top:1px solid var(--line);padding:44px 0 56px}
       <span><b>SONARR</b> :8989</span><span><b>RADARR</b> :7878</span><span><b>LIDARR</b> :8686</span><span><b>READARR</b> :8787</span><span><b>PROWLARR</b> :9696</span><span><b>BAZARR</b> :6767</span><span><b>WHISPARR</b> :6969</span><span class="me"><b>TIREDARR</b> :2222</span>
       <span><b>SONARR</b> :8989</span><span><b>RADARR</b> :7878</span><span><b>LIDARR</b> :8686</span><span><b>READARR</b> :8787</span><span><b>PROWLARR</b> :9696</span><span><b>BAZARR</b> :6767</span><span><b>WHISPARR</b> :6969</span><span class="me"><b>TIREDARR</b> :2222</span>
     </div>
-    <span class="strip-note">you paused it. it needed that.</span>
+    <span class="strip-note">it stops when watched. consistent with the rest of your stack.</span>
   </div>
 
   <section id="problem" class="wrap">
@@ -584,6 +584,14 @@ footer{margin-top:110px;border-top:1px solid var(--line);padding:44px 0 56px}
         <p>That's dark mode. The darkest mode. Lights off. Go to sleep.</p>
       </details>
       <details class="reveal">
+        <summary><span class="m">▸</span>How is this different from not installing anything?</summary>
+        <p>Branding.</p>
+      </details>
+      <details class="reveal">
+        <summary><span class="m">▸</span>Is there a Discord?</summary>
+        <p>Yes. Notifications are muted. In both directions.</p>
+      </details>
+      <details class="reveal">
         <summary><span class="m">▸</span>Will there be a v1.0?</summary>
         <p>The roadmap says “eventually.” The roadmap is a sticky note. The sticky note fell behind the desk.</p>
       </details>
@@ -613,6 +621,7 @@ const excuses=[
   "Ask Sonarr, it loves attention.",
   "Request queued behind 4,612 unwatched episodes.",
   "It's not you, it's everything.",
+  "Working as intended. The intention was nothing.",
 ];
 let clicks=0;
 const dl=document.getElementById("dl"),ex=document.getElementById("excuse");
