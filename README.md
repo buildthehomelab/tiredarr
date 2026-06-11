@@ -7,7 +7,7 @@
 ![arrs](https://img.shields.io/badge/*arrs-too%20many-red)
 ![motivation](https://img.shields.io/badge/motivation-0%25-lightgrey)
 
-🌐 **Website:** [tiredarr.rest](https://tiredarr.rest/) — a REST API that is finally resting.
+🌐 **Website:** [buildthehomelab.github.io/tiredarr](https://buildthehomelab.github.io/tiredarr/) — it loads eventually.
 
 **Tiredarr is a fatigue PVR for Usenet and BitTorrent users.** It monitors multiple RSS feeds (Really Sleepy Syndication) for new naps and will grab, sort, and rename them. It can also be configured to automatically upgrade the quality of sleep already obtained when a better format becomes available.
 
