@@ -1,0 +1,15 @@
+services:
+  tiredarr:
+    build: .
+    image: ghcr.io/tiredarr/tiredarr:latest # 'latest' is also the only tag
+    container_name: tiredarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/Whenever
+    volumes:
+      - ./config:/config
+      - /dev/null:/naps # hardlink-friendly
+    ports:
+      - "2222:2222"
+    restart: "no" # finally, an *arr that knows when to stop

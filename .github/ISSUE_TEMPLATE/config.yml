@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 😴 Too tired to open an issue
+    url: https://http.cat/503
+    about: We understand. Here is a cat representing our service status.

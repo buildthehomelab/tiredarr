@@ -1,0 +1,15 @@
+{
+  "name": "tiredarr",
+  "version": "0.0.0-alpha-someday",
+  "description": "The last *arr. A fatigue PVR for exhausted homelab users.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo 'we believe in you, server.js' && node --check server.js",
+    "build": "echo 'no.'"
+  },
+  "keywords": ["arr", "tired", "nap", "pvr", "satire"],
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

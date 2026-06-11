@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiredarr — the last *arr you'll ever install</title>
+<meta name="description" content="Tiredarr is a fatigue PVR for Usenet and BitTorrent users. It monitors multiple RSS feeds (Really Sleepy Syndication) for new naps. Satire. Obviously.">
+<meta property="og:title" content="Tiredarr — the last *arr you'll ever install">
+<meta property="og:description" content="A fatigue PVR for exhausted homelab users. Sonarr manages your TV. Radarr manages your movies. Nobody manages you. Until now. Sort of. Not really.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://buildthehomelab.github.io/tiredarr/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%98%B4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Spline+Sans+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0d18;
+  --bg2:#0d1122;
+  --panel:#11162c;
+  --panel2:#151b38;
+  --line:rgba(169,157,245,.13);
+  --line2:rgba(169,157,245,.25);
+  --text:#e9ebf7;
+  --muted:#8d94ba;
+  --faint:#5b6188;
+  --accent:#a99df5;
+  --accent-deep:#7d6ee8;
+  --amber:#e8b36b;
+  --danger:#e07a7a;
+  --ok:#7ac9a3;
+  --radius:14px;
+  --display:"Bricolage Grotesque",sans-serif;
+  --mono:"Spline Sans Mono",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--display);
+  font-weight:350;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--accent-deep);color:#fff}
+
+/* ---------- atmosphere ---------- */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.sky::before{
+  content:"";position:absolute;inset:-20%;
+  background:
+    radial-gradient(60rem 38rem at 78% -8%, rgba(125,110,232,.16), transparent 60%),
+    radial-gradient(46rem 30rem at 8% 22%, rgba(232,179,107,.05), transparent 60%),
+    radial-gradient(70rem 50rem at 50% 115%, rgba(125,110,232,.10), transparent 65%);
+}
+.stars,.stars2{position:absolute;inset:0}
+.stars{
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(233,235,247,.7), transparent),
+    radial-gradient(1px 1px at 28% 64%, rgba(233,235,247,.45), transparent),
+    radial-gradient(1.5px 1.5px at 41% 12%, rgba(169,157,245,.8), transparent),
+    radial-gradient(1px 1px at 55% 44%, rgba(233,235,247,.5), transparent),
+    radial-gradient(1px 1px at 67% 9%, rgba(233,235,247,.6), transparent),
+    radial-gradient(1.5px 1.5px at 76% 56%, rgba(169,157,245,.55), transparent),
+    radial-gradient(1px 1px at 88% 30%, rgba(233,235,247,.6), transparent),
+    radial-gradient(1px 1px at 94% 74%, rgba(233,235,247,.4), transparent),
+    radial-gradient(1px 1px at 6% 84%, rgba(233,235,247,.4), transparent),
+    radial-gradient(1.5px 1.5px at 35% 90%, rgba(169,157,245,.5), transparent);
+}
+.stars2{
+  background-image:
+    radial-gradient(2px 2px at 20% 35%, rgba(233,235,247,.9), transparent),
+    radial-gradient(2px 2px at 62% 22%, rgba(169,157,245,.9), transparent),
+    radial-gradient(2px 2px at 83% 82%, rgba(233,235,247,.8), transparent);
+  animation:twinkle 6s ease-in-out infinite alternate;
+}
+@keyframes twinkle{from{opacity:.25}to{opacity:1}}
+.grain{
+  position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='.9'%20numOctaves='2'/%3E%3C/filter%3E%3Crect%20width='160'%20height='160'%20filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+main,nav,footer{position:relative;z-index:1}
+.wrap{max-width:1140px;margin:0 auto;padding:0 28px}
+
+/* ---------- nav ---------- */
+nav{
+  position:sticky;top:0;z-index:40;
+  background:rgba(10,13,24,.72);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.navbar{display:flex;align-items:center;gap:28px;height:64px}
+.wordmark{
+  font-family:var(--mono);font-weight:600;font-size:1.06rem;color:var(--text);
+  text-decoration:none;letter-spacing:-.02em;display:flex;align-items:center;gap:9px;
+}
+.wordmark .moon{font-size:1.2rem;display:inline-block;animation:nod 7s ease-in-out infinite}
+@keyframes nod{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-9deg) translateY(1px)}}
+.wordmark em{font-style:normal;color:var(--accent)}
+.navlinks{display:flex;gap:22px;margin-left:auto;align-items:center}
+.navlinks a{color:var(--muted);text-decoration:none;font-size:.92rem;transition:color .2s}
+.navlinks a:hover{color:var(--text)}
+.gh-btn{
+  font-family:var(--mono);font-size:.84rem;color:var(--text)!important;
+  border:1px solid var(--line2);padding:7px 14px;border-radius:8px;transition:all .2s;
+}
+.gh-btn:hover{border-color:var(--accent);background:rgba(169,157,245,.08)}
+
+/* ---------- hero ---------- */
+.hero{padding:88px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.76rem;color:var(--accent);
+  border:1px solid var(--line2);border-radius:999px;padding:6px 14px;
+  background:rgba(169,157,245,.06);margin-bottom:26px;
+}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
+h1{
+  font-size:clamp(2.6rem,5.4vw,4.3rem);
+  font-weight:750;line-height:1.04;letter-spacing:-.03em;
+  font-variation-settings:"opsz" 96;
+  margin-bottom:22px;
+}
+h1 .star{color:var(--accent)}
+h1 .yawn{
+  display:inline-block;font-weight:300;font-style:italic;color:var(--muted);
+}
+.lede{color:var(--muted);font-size:1.13rem;max-width:34rem;margin-bottom:32px}
+.lede strong{color:var(--text);font-weight:600}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:30px}
+.btn{
+  font-family:var(--mono);font-size:.93rem;font-weight:500;
+  padding:13px 22px;border-radius:10px;cursor:pointer;text-decoration:none;
+  transition:transform .15s,box-shadow .2s,background .2s;border:none;
+}
+.btn-primary{
+  background:linear-gradient(160deg,var(--accent),var(--accent-deep));
+  color:#0a0d18;font-weight:600;
+  box-shadow:0 6px 30px rgba(125,110,232,.35);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 36px rgba(125,110,232,.45)}
+.btn-primary.dozing{animation:microshake .3s ease}
+@keyframes microshake{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+.excuse{font-family:var(--mono);font-size:.8rem;color:var(--amber);min-height:1.3em;display:block}
+.statline{font-family:var(--mono);font-size:.8rem;color:var(--faint);display:flex;gap:10px;flex-wrap:wrap}
+.statline b{color:var(--muted);font-weight:500}
+
+/* ---------- fake app window ---------- */
+.shot{position:relative}
+.window{
+  background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);
+  box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.3);
+  transform:rotate(-1.4deg);
+  font-size:.78rem;overflow:hidden;
+}
+.win-top{
+  display:flex;align-items:center;gap:8px;padding:11px 14px;
+  background:var(--bg2);border-bottom:1px solid var(--line);
+}
+.win-top .tl{width:11px;height:11px;border-radius:50%}
+.tl.r{background:#e0726f}.tl.y{background:#e3b54f}.tl.g{background:#7ac98f}
+.win-title{font-family:var(--mono);color:var(--faint);font-size:.72rem;margin-left:8px}
+.health{
+  background:rgba(232,179,107,.09);border-bottom:1px solid rgba(232,179,107,.25);
+  color:var(--amber);font-family:var(--mono);font-size:.7rem;padding:7px 14px;
+}
+.app{display:grid;grid-template-columns:128px 1fr;min-height:300px}
+.side{background:var(--bg2);border-right:1px solid var(--line);padding:12px 0;display:flex;flex-direction:column}
+.side a{
+  display:block;color:var(--muted);text-decoration:none;font-family:var(--mono);
+  font-size:.74rem;padding:8px 16px;border-left:2px solid transparent;
+}
+.side a.on{color:var(--accent);border-left-color:var(--accent);background:rgba(169,157,245,.07)}
+.side .sleepstate{
+  margin-top:auto;padding:10px 16px;font-family:var(--mono);font-size:.68rem;color:var(--ok);
+  display:flex;align-items:center;gap:7px;
+}
+.sleepstate .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:breathe 4s ease-in-out infinite}
+.mainpane{padding:14px}
+.mainpane h4{font-family:var(--mono);font-weight:500;font-size:.8rem;color:var(--text);margin-bottom:10px}
+.row{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+  border:1px solid transparent;
+}
+.row:nth-child(odd){background:rgba(255,255,255,.022)}
+.row .name{flex:1;font-weight:500;font-size:.8rem}
+.q{
+  font-family:var(--mono);font-size:.62rem;color:var(--muted);
+  border:1px solid var(--line2);border-radius:5px;padding:2px 7px;white-space:nowrap;
+}
+.st{font-family:var(--mono);font-size:.62rem;border-radius:5px;padding:2px 8px;white-space:nowrap}
+.st.missed{color:var(--amber);background:rgba(232,179,107,.12)}
+.st.failed{color:var(--danger);background:rgba(224,122,122,.12)}
+.st.wanted{color:var(--accent);background:rgba(169,157,245,.14);animation:breathe 4s ease-in-out infinite}
+.search{
+  margin-top:12px;padding:10px;border:1px dashed var(--line2);border-radius:8px;
+  font-family:var(--mono);font-size:.68rem;color:var(--faint);
+}
+.bar{height:5px;border-radius:99px;background:rgba(255,255,255,.06);margin-top:7px;overflow:hidden}
+.bar i{
+  display:block;height:100%;width:3%;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent-deep),var(--accent));
+  animation:trying 5s ease-in-out infinite;
+}
+@keyframes trying{0%,100%{width:3%}50%{width:4%}}
+.toast{
+  position:absolute;right:-18px;bottom:-20px;
+  background:var(--panel2);border:1px solid rgba(232,179,107,.4);border-left:3px solid var(--amber);
+  border-radius:10px;padding:10px 14px;font-family:var(--mono);font-size:.68rem;color:var(--text);
+  box-shadow:0 18px 50px rgba(0,0,0,.5);transform:rotate(1.2deg);
+}
+.toast b{color:var(--amber);font-weight:600;display:block;margin-bottom:2px}
+.zzz{position:absolute;top:-14px;right:34px;pointer-events:none}
+.zzz span{
+  position:absolute;font-family:var(--mono);color:var(--accent);opacity:0;
+  animation:floatz 5s ease-in-out infinite;
+}
+.zzz span:nth-child(1){font-size:.8rem;animation-delay:0s}
+.zzz span:nth-child(2){font-size:1.05rem;left:14px;animation-delay:1.6s}
+.zzz span:nth-child(3){font-size:1.35rem;left:30px;animation-delay:3.2s}
+@keyframes floatz{
+  0%{opacity:0;transform:translateY(8px) rotate(8deg)}
+  25%{opacity:.9}
+  100%{opacity:0;transform:translateY(-46px) rotate(-12deg)}
+}
+
+/* ---------- marquee ---------- */
+.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:70px 0 0;overflow:hidden;position:relative}
+.track{
+  display:inline-flex;gap:0;white-space:nowrap;padding:16px 0;
+  animation:scroll 48s linear infinite;will-change:transform;
+}
+.strip:hover .track{animation-play-state:paused}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.track span{
+  font-family:var(--mono);font-size:.82rem;color:var(--faint);padding:0 26px;
+  border-right:1px solid var(--line);
+}
+.track span b{color:var(--muted);font-weight:500}
+.track span.me{color:var(--accent)}
+.track span.me b{color:var(--accent);font-weight:700}
+.strip-note{
+  position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:.68rem;color:var(--faint);opacity:0;transition:opacity .3s;
+  background:var(--bg);padding:4px 10px;border:1px solid var(--line);border-radius:6px;pointer-events:none;
+}
+.strip:hover .strip-note{opacity:1}
+
+/* ---------- sections ---------- */
+section{padding:90px 0 0}
+.kicker{font-family:var(--mono);font-size:.76rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+h2{font-size:clamp(1.7rem,3.2vw,2.5rem);font-weight:700;letter-spacing:-.025em;line-height:1.12;margin-bottom:14px}
+.sub{color:var(--muted);max-width:38rem;margin-bottom:40px}
+
+/* ports table */
+.ports{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:rgba(255,255,255,.015)}
+.ports .prow{
+  display:grid;grid-template-columns:1.2fr 2fr .8fr;gap:12px;
+  padding:13px 22px;border-bottom:1px solid var(--line);
+  font-size:.92rem;align-items:center;
+}
+.ports .prow:last-child{border-bottom:none}
+.ports .ph{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--faint)}
+.ports .app-name{font-family:var(--mono);font-weight:500}
+.ports .port{font-family:var(--mono);color:var(--muted);text-align:right}
+.ports .manages{color:var(--muted)}
+.ports .prow.me{
+  background:linear-gradient(90deg,rgba(169,157,245,.10),transparent);
+  border-left:3px solid var(--accent);
+}
+.ports .prow.me .app-name,.ports .prow.me .port{color:var(--accent);font-weight:700}
+.ports .prow.me .manages{color:var(--text);font-weight:600}
+
+/* features bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.card{
+  grid-column:span 2;
+  background:rgba(255,255,255,.018);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px 24px;transition:border-color .25s,transform .25s,background .25s;position:relative;overflow:hidden;
+}
+.card:hover{border-color:var(--line2);transform:translateY(-3px);background:rgba(169,157,245,.04)}
+.card.wide{grid-column:span 3}
+.card .tag{font-family:var(--mono);font-size:.68rem;color:var(--accent);letter-spacing:.1em;display:block;margin-bottom:12px}
+.card h3{font-size:1.08rem;font-weight:650;margin-bottom:8px;letter-spacing:-.01em}
+.card p{color:var(--muted);font-size:.92rem}
+.card.sleeper .doze{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);color:var(--accent);font-size:1.1rem;letter-spacing:.5em;
+  opacity:0;transition:opacity .4s;pointer-events:none;background:rgba(17,22,44,.85);
+}
+.card.sleeper:hover .doze{opacity:1}
+
+/* releases */
+.rel{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.release{
+  border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;
+  background:rgba(255,255,255,.015);transition:border-color .25s;
+}
+.release:hover{border-color:var(--line2)}
+.release .fname{
+  font-family:var(--mono);font-size:.84rem;color:var(--text);font-weight:500;
+  word-break:break-all;margin-bottom:10px;display:block;
+}
+.release .fname i{font-style:normal;color:var(--accent)}
+.release p{color:var(--muted);font-size:.88rem;margin-bottom:12px}
+.seeds{font-family:var(--mono);font-size:.7rem;display:flex;gap:16px}
+.seeds .s{color:var(--ok)}.seeds .l{color:var(--danger)}
+.release.nuked{border-color:rgba(224,122,122,.3)}
+.release.nuked .fname{text-decoration:line-through;text-decoration-color:rgba(224,122,122,.6);text-decoration-thickness:1px}
+.nuke{font-family:var(--mono);font-size:.66rem;color:var(--danger);border:1px solid rgba(224,122,122,.35);border-radius:5px;padding:2px 8px;margin-left:8px;white-space:nowrap}
+
+/* terminal */
+.term{
+  background:#080a13;border:1px solid var(--line2);border-radius:var(--radius);
+  font-family:var(--mono);font-size:.84rem;overflow:hidden;
+  box-shadow:0 30px 70px rgba(0,0,0,.45);
+}
+.term-body{padding:22px 24px;line-height:1.85}
+.term-body .c-cmd{color:var(--text)}
+.term-body .c-cmd::before{content:"$ ";color:var(--accent)}
+.term-body .c-dim{color:var(--faint);font-style:italic}
+.term-body .c-status{color:var(--amber)}
+.term-body .c-head{color:var(--muted)}
+.term-body .c-head b{color:var(--accent);font-weight:500}
+.term-body .c-json{color:var(--ok)}
+.cursor{display:inline-block;width:8px;height:1.05em;background:var(--accent);vertical-align:text-bottom;animation:blink 1.4s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* faq */
+.faq{max-width:760px}
+details{border-bottom:1px solid var(--line);padding:4px 0}
+summary{
+  cursor:pointer;list-style:none;display:flex;align-items:center;gap:14px;
+  padding:18px 4px;font-weight:600;font-size:1.02rem;
+}
+summary::-webkit-details-marker{display:none}
+summary .m{color:var(--accent);font-family:var(--mono);transition:transform .3s;font-weight:400}
+details[open] summary .m{transform:rotate(90deg)}
+details p{color:var(--muted);padding:0 4px 20px 30px;max-width:40rem}
+
+/* footer */
+footer{margin-top:110px;border-top:1px solid var(--line);padding:44px 0 56px}
+.foot{display:flex;flex-wrap:wrap;gap:18px;align-items:baseline;justify-content:space-between}
+.foot .small{font-family:var(--mono);font-size:.72rem;color:var(--faint);max-width:46rem}
+.foot a{color:var(--muted)}
+.uptime{font-family:var(--mono);font-size:.72rem;color:var(--faint);margin-top:14px}
+.uptime b{color:var(--accent);font-weight:500}
+
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+.hero .reveal{transition-duration:.9s}
+
+@media (max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:42px}
+  .window{transform:none}
+  .toast{right:4px;bottom:-16px}
+  .bento{grid-template-columns:1fr 1fr}
+  .card,.card.wide{grid-column:span 2}
+  .rel{grid-template-columns:1fr}
+  .navlinks a:not(.gh-btn){display:none}
+}
+@media (max-width:560px){
+  .bento{grid-template-columns:1fr}
+  .card,.card.wide{grid-column:span 1}
+  .app{grid-template-columns:96px 1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="sky"><div class="stars"></div><div class="stars2"></div></div>
+<div class="grain"></div>
+
+<nav>
+  <div class="wrap navbar">
+    <a class="wordmark" href="#"><span class="moon">😴</span>tired<em>arr</em></a>
+    <div class="navlinks">
+      <a href="#problem">The Problem</a>
+      <a href="#features">Features</a>
+      <a href="#quality">Quality</a>
+      <a href="#api">API</a>
+      <a href="#faq">FAQ</a>
+      <a class="gh-btn" href="https://github.com/buildthehomelab/tiredarr">GitHub ↗</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <header class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="pill reveal in"><span class="dot"></span>v0.0.0-alpha-someday — still not out</span>
+        <h1 class="reveal in">The last <span class="star">*</span>arr you'll ever install<span class="yawn">, we promise.</span></h1>
+        <p class="lede reveal in">Tiredarr is a <strong>fatigue PVR</strong> for Usenet and BitTorrent users. It monitors multiple RSS feeds <em>(Really Sleepy Syndication)</em> for new naps, then grabs, sorts and renames them. Eventually.</p>
+        <div class="cta-row reveal in">
+          <button class="btn btn-primary" id="dl">Download v0.0.0</button>
+          <a class="btn btn-ghost" href="https://github.com/buildthehomelab/tiredarr/blob/main/server.js">View source — it's one file</a>
+        </div>
+        <span class="excuse reveal in" id="excuse">&nbsp;</span>
+        <div class="statline reveal in" style="margin-top:18px">
+          <b>0</b> dependencies · <b>1</b> file · port <b>2222</b> · <b>∞</b> unmanaged feelings
+        </div>
+      </div>
+
+      <div class="shot reveal in">
+        <div class="zzz"><span>z</span><span>z</span><span>z</span></div>
+        <div class="window">
+          <div class="win-top">
+            <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+            <span class="win-title">tiredarr — Naps</span>
+          </div>
+          <div class="health">⚠ Health check: indexer “Bed” unreachable since 2019</div>
+          <div class="app">
+            <div class="side">
+              <a class="on" href="#">◉ Naps</a>
+              <a href="#">▦ Calendar</a>
+              <a href="#">↻ Activity</a>
+              <a href="#">☾ Wanted</a>
+              <a href="#">⚙ System</a>
+              <div class="sleepstate"><span class="dot"></span>service: resting</div>
+            </div>
+            <div class="mainpane">
+              <h4>Nap Queue</h4>
+              <div class="row"><span class="name">Power Nap</span><span class="q">PowerNap-720p</span><span class="st missed">missed</span></div>
+              <div class="row"><span class="name">Afternoon Nap</span><span class="q">REM-1080p</span><span class="st missed">missed</span></div>
+              <div class="row"><span class="name">Weekend Lie-In</span><span class="q">REM-1080p</span><span class="st failed">failed: one more episode</span></div>
+              <div class="row"><span class="name">Full Night Sleep</span><span class="q">Hibernation-2160p-REMUX</span><span class="st wanted">wanted</span></div>
+              <div class="search">
+                Searching 4 indexers — Couch, Bed, Hammock, That One Armchair · 3%
+                <div class="bar"><i></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toast"><b>⚠ Nap interrupted</b>Plex started transcoding for some reason</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="strip" aria-hidden="true">
+    <div class="track">
+      <span><b>SONARR</b> :8989</span><span><b>RADARR</b> :7878</span><span><b>LIDARR</b> :8686</span><span><b>READARR</b> :8787</span><span><b>PROWLARR</b> :9696</span><span><b>BAZARR</b> :6767</span><span><b>WHISPARR</b> :6969</span><span class="me"><b>TIREDARR</b> :2222</span>
+      <span><b>SONARR</b> :8989</span><span><b>RADARR</b> :7878</span><span><b>LIDARR</b> :8686</span><span><b>READARR</b> :8787</span><span><b>PROWLARR</b> :9696</span><span><b>BAZARR</b> :6767</span><span><b>WHISPARR</b> :6969</span><span class="me"><b>TIREDARR</b> :2222</span>
+    </div>
+    <span class="strip-note">you paused it. it needed that.</span>
+  </div>
+
+  <section id="problem" class="wrap">
+    <p class="kicker reveal">// the problem</p>
+    <h2 class="reveal">You are running nine of these.</h2>
+    <p class="sub reveal">Each one needs an update, an API key, a reverse proxy rule, and a small piece of your soul. The stack manages your media perfectly. Nobody manages <em>you</em>.</p>
+    <div class="ports reveal">
+      <div class="prow"><span class="ph">App</span><span class="ph">Manages</span><span class="ph" style="text-align:right">Port</span></div>
+      <div class="prow"><span class="app-name">Sonarr</span><span class="manages">TV</span><span class="port">8989</span></div>
+      <div class="prow"><span class="app-name">Radarr</span><span class="manages">Movies</span><span class="port">7878</span></div>
+      <div class="prow"><span class="app-name">Lidarr</span><span class="manages">Music</span><span class="port">8686</span></div>
+      <div class="prow"><span class="app-name">Readarr</span><span class="manages">Books</span><span class="port">8787</span></div>
+      <div class="prow"><span class="app-name">Prowlarr</span><span class="manages">Indexers — an *arr to manage your *arrs</span><span class="port">9696</span></div>
+      <div class="prow"><span class="app-name">Bazarr</span><span class="manages">Subtitles</span><span class="port">6767</span></div>
+      <div class="prow"><span class="app-name">Whisparr</span><span class="manages">“Research”</span><span class="port">6969</span></div>
+      <div class="prow me"><span class="app-name">Tiredarr</span><span class="manages">You</span><span class="port">2222</span></div>
+    </div>
+    <p class="sub reveal" style="margin-top:18px;font-size:.9rem">Port 2222 — named after 22:22, the time you said you'd go to bed.</p>
+  </section>
+
+  <section id="features" class="wrap">
+    <p class="kicker reveal">// features</p>
+    <h2 class="reveal">It does nothing. Through the standard *arr v3 API.</h2>
+    <p class="sub reveal">So at least it's consistent with the rest of your stack.</p>
+    <div class="bento">
+      <div class="card wide reveal">
+        <span class="tag">01 / DETECTION</span>
+        <h3>Automatic Nap Detection</h3>
+        <p>Monitors your calendar, your server uptime, and your soul. When all three look bad, a nap is added to Wanted. It stays there.</p>
+      </div>
+      <div class="card reveal sleeper">
+        <span class="tag">02 / STORAGE</span>
+        <h3>Hardlink Support</h3>
+        <p>Naps occupy zero extra disk space, because they never happen.</p>
+        <div class="doze">z z z</div>
+      </div>
+      <div class="card reveal">
+        <span class="tag">03 / RETRY</span>
+        <h3>Failed Nap Handling</h3>
+        <p>Automatically retries when a nap is interrupted by a Plex “transcoding” push notification.</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag">04 / CONNECT</span>
+        <h3>Notifications</h3>
+        <p>Pings Discord, Slack, Telegram and ntfy when you should be asleep. You will read the notification instead of sleeping.</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag">05 / INDEXERS</span>
+        <h3>Indexer Support</h3>
+        <p>Searches Couch, Bed, Hammock and That One Armchair. Falls back to Desk if all else fails.</p>
+      </div>
+      <div class="card wide reveal">
+        <span class="tag">06 / CUSTOM FORMATS</span>
+        <h3>Custom Format Scoring</h3>
+        <p>Scores releases by blanket weight, room temperature, and whether the dog is on the bed. Dog on bed is +10 comfort, −400 mobility.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="quality" class="wrap">
+    <p class="kicker reveal">// quality profiles</p>
+    <h2 class="reveal">From Micronap to full REMUX.</h2>
+    <p class="sub reveal">Tiredarr automatically upgrades sleep already obtained when a better format becomes available. It has never become available.</p>
+    <div class="rel">
+      <div class="release reveal">
+        <span class="fname">Micronap.480p.MEETING.<i>CAM</i>-TRD</span>
+        <p>Eyes closed in a meeting. Lossy. Audience laughter audible.</p>
+        <div class="seeds"><span class="s">▲ 2,113 seeders</span><span class="l">▼ everyone, constantly</span></div>
+      </div>
+      <div class="release reveal">
+        <span class="fname">Power.Nap.720p.COUCH.<i>WEB-DL</i>-TRD</span>
+        <p>Twenty minutes. One shoe still on. Surprisingly well encoded.</p>
+        <div class="seeds"><span class="s">▲ 312 seeders</span><span class="l">▼ 8,907 leechers</span></div>
+      </div>
+      <div class="release reveal">
+        <span class="fname">Afternoon.Sleep.1080p.BED.<i>BluRay</i>-TRD</span>
+        <p>A real sleep cycle. Rarely seeded. Often fakes.</p>
+        <div class="seeds"><span class="s">▲ 4 seeders</span><span class="l">▼ 41,002 leechers</span></div>
+      </div>
+      <div class="release nuked reveal">
+        <span class="fname">Full.Night.Sleep.2160p.BED.<i>REMUX</i>-TRD<span class="nuke">NUKED: fake</span></span>
+        <p>Eight full hours, phone untouched. Most indexers consider this release fabricated.</p>
+        <div class="seeds"><span class="s">▲ 0 seeders</span><span class="l">▼ 4.6B leechers</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="api" class="wrap">
+    <p class="kicker reveal">// api</p>
+    <h2 class="reveal">Standard *arr v3 API. For consistency with the ecosystem that broke you.</h2>
+    <p class="sub reveal">Every response includes <code style="font-family:var(--mono);color:var(--accent)">Retry-After: 28800</code> — eight hours, the recommended amount — and arrives after a 2–4 second delay, because Tiredarr responds to requests the way you respond to texts.</p>
+    <div class="term reveal">
+      <div class="win-top">
+        <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+        <span class="win-title">you@homelab: ~</span>
+      </div>
+      <div class="term-body">
+        <div class="c-cmd">curl -i http://localhost:2222/ping</div>
+        <div class="c-dim">— 3.4 seconds later —</div>
+        <div class="c-status">HTTP/1.1 503 Service Unavailable</div>
+        <div class="c-head"><b>Retry-After:</b> 28800</div>
+        <div class="c-head"><b>X-Tiredarr-Mood:</b> exhausted</div>
+        <div class="c-json">{ "status": "tired" }</div>
+        <br>
+        <div class="c-cmd">curl -X POST http://localhost:2222/api/v3/nap</div>
+        <div class="c-status">HTTP/1.1 425 Too Early</div>
+        <div class="c-json">{ "error": "Too Early", "message": "Can't. Tired. Try tomorrow." }</div>
+        <br>
+        <div class="c-cmd"><span class="cursor"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <p class="kicker reveal">// faq</p>
+    <h2 class="reveal">Frequently Avoided Questions</h2>
+    <div class="faq" style="margin-top:34px">
+      <details class="reveal">
+        <summary><span class="m">▸</span>Is this a real project?</summary>
+        <p>No. It's the only *arr honest enough to admit it.</p>
+      </details>
+      <details class="reveal">
+        <summary><span class="m">▸</span>Does it integrate with Overseerr?</summary>
+        <p>Overseerr can request naps on your behalf. Tiredarr will ignore them, maintaining full compatibility with your existing behavior.</p>
+      </details>
+      <details class="reveal">
+        <summary><span class="m">▸</span>Why is the web UI blank?</summary>
+        <p>That's dark mode. The darkest mode. Lights off. Go to sleep.</p>
+      </details>
+      <details class="reveal">
+        <summary><span class="m">▸</span>Will there be a v1.0?</summary>
+        <p>The roadmap says “eventually.” The roadmap is a sticky note. The sticky note fell behind the desk.</p>
+      </details>
+      <details class="reveal">
+        <summary><span class="m">▸</span>What about Tiredarr2?</summary>
+        <p>Don't you dare.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="wordmark" href="#"><span class="moon">😴</span>tired<em>arr</em></a>
+      <p class="small">Tiredarr is satire and is not affiliated with Sonarr, Radarr, Lidarr, Readarr, Prowlarr, Bazarr, Whisparr, or whichever new one appeared while you were reading this sentence. <a href="https://github.com/buildthehomelab/tiredarr">Source on GitHub</a> · MIT licensed · zero dependencies, we were too tired to add any.</p>
+    </div>
+    <p class="uptime">page uptime: <b id="uptime">0s</b> — longest this project has ever run</p>
+  </div>
+</footer>
+
+<script>
+// download button: excuses first, honesty eventually
+const excuses=[
+  "Download queued. ETA: tomorrow.",
+  "Can't. Tired.",
+  "Ask Sonarr, it loves attention.",
+  "Request queued behind 4,612 unwatched episodes.",
+  "It's not you, it's everything.",
+];
+let clicks=0;
+const dl=document.getElementById("dl"),ex=document.getElementById("excuse");
+dl.addEventListener("click",()=>{
+  if(clicks<excuses.length){
+    ex.textContent=excuses[clicks++];
+    dl.classList.remove("dozing");void dl.offsetWidth;dl.classList.add("dozing");
+    if(clicks===excuses.length)dl.textContent="okay fine →";
+  }else{
+    window.location.href="https://github.com/buildthehomelab/tiredarr";
+  }
+});
+
+// the tab rests when you look away
+let baseTitle=document.title;
+document.addEventListener("visibilitychange",()=>{
+  document.title=document.hidden?"😴 finally, some rest":baseTitle;
+});
+
+// reveal on scroll
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}});
+},{threshold:.12});
+document.querySelectorAll(".reveal:not(.in)").forEach(el=>io.observe(el));
+
+// uptime counter, the project's proudest metric
+const t0=Date.now(),up=document.getElementById("uptime");
+setInterval(()=>{
+  const s=Math.floor((Date.now()-t0)/1000);
+  up.textContent=s<60?s+"s":Math.floor(s/60)+"m "+(s%60)+"s";
+},1000);
+</script>
+</body>
+</html>

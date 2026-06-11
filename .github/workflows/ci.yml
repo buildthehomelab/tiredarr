@@ -1,0 +1,23 @@
+name: CI (eventually)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "22 22 * * *" # 22:22 UTC, the time you said you'd go to bed
+
+jobs:
+  rest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Test
+        run: npm test
+      - name: Take a break
+        run: sleep 8 # 8 seconds. a scaled-down 8 hours.
+      - name: Report mood
+        run: echo "::notice::status=tired, build=napping, everything=fine probably"
